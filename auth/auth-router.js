@@ -23,7 +23,36 @@ router.post('/register', async (req, res, next) => {
 })
 
 router.post('/login', async (req, res, next) => {
-  // implement login
+  const authError = {
+    message: "You shall noy pass."
+  }
+
+  try {
+    const { username, password } = req.body
+    const user = await db.findBy({ username }).first()
+
+
+    if(!user){
+      return res.status(401).json(authError)
+    }
+
+    const validPass = await bc.compareSync(password, user.password)
+
+    if(!validPass){
+      return res.status(401).json(authError)
+    }
+
+    const token = {
+      userId: user.id,
+      username: user.department
+    }
+
+    res.cookie("token", jwt.sign(token, process.env.JWT_SECRET))
+    res.json({message: `Welcome ${user.username}`})
+      
+  }catch(err){
+    next(err)
+  }
 })
 
 module.exports = router;

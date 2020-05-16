@@ -31,14 +31,11 @@ describe("users registration intergation test", () => {
 
 describe("users login intergation test", () => {
     it("POST /api/auth/login logs in a user", async () => {
-        //add a user to hash a pass and test against that entry
-        const newUser = { username: "test", password: "test"}
-        await supertest(server).post("/api/auth/register").send(newUser)
-        //now test against newly created user
-        const res = await supertest(server).post("/api/auth/login").send(newUser)
+        const user = { username: "Admin", password: "password"}
+        const res = await supertest(server).post("/api/auth/login").send(user)
         expect(res.statusCode).toBe(200)
         expect(res.type).toBe("application/json")
-        expect(res.body.username).toBe("test") 
+        expect(res.body.message).toBe("Welcome Admin") 
     })
 
     it("POST /api/auth/login (fail- user that does not exists)", async () => {
